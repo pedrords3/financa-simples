@@ -1,0 +1,122 @@
+
+:root {
+    --verde-principal: #2ecc71;
+    --vermelho-gastos: #e74c3c;
+    --azul-objetivos: #3498db;
+    --amarelo-destaque: #f1c40f;
+}
+
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding-bottom: 50px;
+}
+
+.card-destaque {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.card-destaque:hover {
+    transform: translateY(-5px);
+}
+
+.saldo-positivo {
+    border-left: 5px solid var(--verde-principal);
+}
+
+.saldo-negativo {
+    border-left: 5px solid var(--vermelho-gastos);
+}
+
+.gasto-item {
+    background: white;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    padding: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: all 0.3s;
+}
+
+.gasto-item:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.categoria-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.btn-action {
+    width: 35px;
+    height: 35px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.valor-gasto {
+    font-weight: 600;
+    color: var(--vermelho-gastos);
+}
+
+.valor-entrada {
+    font-weight: 600;
+    color: var(--verde-principal);
+}
+
+.objetivo-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+.progresso-objetivo {
+    height: 10px;
+    border-radius: 5px;
+    background: rgba(255,255,255,0.3);
+    margin-top: 10px;
+}
+
+.progresso-objetivo .progress-bar {
+    background: var(--amarelo-destaque);
+    border-radius: 5px;
+}
+
+.header-principal {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.dica-item {
+    background: #fff9e6;
+    border-left: 4px solid var(--amarelo-destaque);
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+.btn-exportar {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-exportar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+}
