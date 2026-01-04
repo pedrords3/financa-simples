@@ -3,7 +3,7 @@
 Sistema web para controle de gastos pessoais com foco em objetivos e dicas inteligentes.
 
 ## 🚀 Demonstração
-[Clique aqui para testar]([https://seu-usuario.github.io/financa-simples](https://pedrords3.github.io/financa-simples/))
+[Clique aqui para testar](https://pedrords3.github.io/financa-simples/)
 
 ## ✨ Funcionalidades
 - 📊 Controle de renda e gastos
