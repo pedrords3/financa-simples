@@ -18,6 +18,11 @@
                 <i class="bi bi-graph-up"></i> Finança Simples
             </h1>
             <p class="text-muted">Sua planilha financeira inteligente</p>
+            <div class="mt-2">
+                <button class="btn btn-outline-danger btn-sm" onclick="mostrarModalLimpar()">
+                    <i class="bi bi-trash"></i> Limpar Todos os Dados
+                </button>
+            </div>
         </div>
 
         <div class="row">
@@ -239,5 +244,40 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     
     <script src="script.js"></script>
+    
+    <!-- Modal para Limpar Dados -->
+    <div class="modal fade" id="modalLimpar" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">
+                        <i class="bi bi-exclamation-triangle"></i> Limpar Todos os Dados
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="alert alert-warning">
+                        <i class="bi bi-exclamation-circle"></i> 
+                        <strong>Atenção!</strong> Esta ação não pode ser desfeita.
+                    </p>
+                    <p>Todos os dados serão apagados, incluindo:</p>
+                    <ul>
+                        <li>Salário registrado</li>
+                        <li>Entradas extras</li>
+                        <li>Gastos do mês</li>
+                        <li>Objetivos definidos</li>
+                        <li>Histórico completo</li>
+                    </ul>
+                    <p class="text-muted">Certifique-se de ter exportado seus dados antes de continuar.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" onclick="limparTodosOsDados()">
+                        <i class="bi bi-trash"></i> Limpar Tudo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

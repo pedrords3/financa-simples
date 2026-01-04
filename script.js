@@ -380,31 +380,41 @@ function atualizarListaObjetivos() {
 }
 
 // ========== DICAS INTELIGENTES ==========
-
 function gerarDicasInteligentes(resumo) {
     const container = document.getElementById('dicas-financeiras');
     let dicas = [];
     
-    // 1. Análise de saldo
+    // 1. Análise de saldo (melhorada)
     if (resumo.saldo > 0) {
+        const percentualSaldo = (resumo.saldo / resumo.totalEntradas * 100).toFixed(1);
+        
+        let mensagemSaldo = `Você tem ${formatarMoeda(resumo.saldo)} disponível (${percentualSaldo}% da sua renda). `;
+        
+        if (percentualSaldo >= 20) {
+            mensagemSaldo += "Excelente! Você está economizando bem. Considere investir parte desse valor.";
+        } else if (percentualSaldo >= 10) {
+            mensagemSaldo += "Bom trabalho! Mantenha essa disciplina financeira.";
+        } else {
+            mensagemSaldo += "Continue assim! Todo valor guardado faz diferença.";
+        }
+        
         dicas.push(`
             <div class="dica-item">
-                <strong>💰 Ótima notícia!</strong><br>
-                Você tem ${formatarMoeda(resumo.saldo)} disponível este mês.
-                ${resumo.saldo > 500 ? 'Ótimo momento para investir!' : 'Considere reservar uma parte para emergências.'}
+                <strong><i class="bi bi-check-circle text-success"></i> Saldo Positivo</strong><br>
+                ${mensagemSaldo}
             </div>
         `);
     } else if (resumo.saldo < 0) {
         dicas.push(`
             <div class="dica-item" style="border-left-color: #e74c3c;">
-                <strong>⚠️ Atenção ao orçamento</strong><br>
+                <strong><i class="bi bi-exclamation-triangle text-danger"></i> Atenção ao Orçamento</strong><br>
                 Seus gastos ultrapassaram sua renda em ${formatarMoeda(Math.abs(resumo.saldo))}.
-                Reveja suas despesas não essenciais.
+                Analise suas despesas não essenciais para equilibrar as contas.
             </div>
         `);
     }
     
-    // 2. Análise por categoria (compreensiva)
+    // 2. Análise por categoria (mais compreensiva)
     Object.entries(resumo.gastosPorCategoria).forEach(([categoria, valor]) => {
         const percentual = (valor / resumo.totalEntradas * 100).toFixed(1);
         const categoriaNome = {
@@ -418,56 +428,166 @@ function gerarDicasInteligentes(resumo) {
         }[categoria];
         
         let mensagem = '';
-        if (categoria === 'moradia' && percentual > 40) {
-            mensagem = `Seus gastos com moradia são ${percentual}% da sua renda. Este é um compromisso importante - considere se há espaço para otimização nos outros custos relacionados.`;
-        } else if (categoria === 'alimentacao' && percentual > 30) {
-            mensagem = `Alimentação representa ${percentual}% da sua renda. Planejar compras e refeições pode trazer economia.`;
-        } else if (categoria === 'lazer' && percentual > 20) {
-            mensagem = `Lazer: ${percentual}% da renda. Equilíbrio é importante para qualidade de vida!`;
-        } else if (percentual > 50) {
-            mensagem = `${categoriaNome} representa ${percentual}% da sua renda.`;
+        let icone = '📊';
+        
+        // Dicas específicas por categoria
+        if (categoria === 'moradia') {
+            if (percentual > 40) {
+                mensagem = `${percentual}% da sua renda vai para moradia. Este é um compromisso importante. Para otimizar, considere: revisar planos de serviços (internet, TV), economizar energia, ou renegociar financiamentos se possível.`;
+                icone = '🏠';
+            } else if (percentual <= 30) {
+                mensagem = `Bom equilíbrio! ${percentual}% para moradia está dentro do recomendado.`;
+                icone = '✅';
+            }
+        } else if (categoria === 'alimentacao') {
+            if (percentual > 30) {
+                mensagem = `Alimentação consome ${percentual}% da renda. Dicas: planeje as compras semanais, evite desperdícios, cozinhe em casa e aproveite ofertas.`;
+                icone = '🍎';
+            }
+        } else if (categoria === 'transporte') {
+            if (percentual > 15) {
+                mensagem = `Transporte: ${percentual}% da renda. Avalie: usar transporte público, caronas solidárias ou otimizar deslocamentos.`;
+                icone = '🚗';
+            }
+        } else if (categoria === 'lazer') {
+            if (percentual > 20) {
+                mensagem = `Lazer representa ${percentual}% da renda. Equilíbrio é importante! Busque opções gratuitas ou mais econômicas para diversão.`;
+                icone = '🎮';
+            } else if (percentual < 5) {
+                mensagem = `Apenas ${percentual}% para lazer. Lembre-se: saúde mental é importante, reserve um pouco para atividades que te fazem bem.`;
+                icone = '💆';
+            }
         }
         
         if (mensagem) {
             dicas.push(`
                 <div class="dica-item">
-                    <strong>📊 ${categoriaNome}</strong><br>
+                    <strong>${icone} ${categoriaNome}</strong><br>
                     ${mensagem}
                 </div>
             `);
         }
     });
     
-    // 3. Sugestões baseadas em objetivos
-    if (financas.objetivos.length > 0 && resumo.saldo > 0) {
-        const objetivoAtivo = financas.objetivos.find(o => !o.concluido);
-        if (objetivoAtivo) {
-            const valorMensal = resumo.saldo * 0.3; // Sugere 30% do saldo
-            const meses = Math.ceil(objetivoAtivo.valorNecessario / valorMensal);
-            
+    // 3. NOVA: Dica de 50-30-20 (regra de orçamento)
+    if (resumo.totalEntradas > 0) {
+        const gastosEssenciais = ['moradia', 'alimentacao', 'transporte', 'saude'];
+        let totalEssenciais = 0;
+        
+        gastosEssenciais.forEach(cat => {
+            totalEssenciais += resumo.gastosPorCategoria[cat] || 0;
+        });
+        
+        const percentualEssenciais = (totalEssenciais / resumo.totalEntradas * 100).toFixed(1);
+        
+        if (percentualEssenciais > 60) {
             dicas.push(`
-                <div class="dica-item">
-                    <strong>🎯 Seu objetivo: ${objetivoAtivo.nome}</strong><br>
-                    Destinando ${formatarMoeda(valorMensal)} por mês (30% do seu saldo disponível), 
-                    você atingirá seu objetivo em aproximadamente ${meses} meses.
+                <div class="dica-item" style="border-left-color: #e74c3c;">
+                    <strong><i class="bi bi-pie-chart-fill"></i> Atenção: Gastos Essenciais Altos</strong><br>
+                    Seus gastos essenciais (moradia, alimentação, transporte, saúde) consomem ${percentualEssenciais}% da renda.
+                    O ideal seria até 50%. Reveja contratos e busque economias onde possível.
                 </div>
             `);
         }
     }
     
-    // 4. Dica de emergência
-    if (resumo.totalEntradas > 0) {
-        const reservaEmergencia = resumo.totalEntradas * 3; // 3 meses de renda
+    // 4. NOVA: Dica de Conscientização
+    if (resumo.totalGastos > 0) {
+        const gastoMedioDiario = resumo.totalGastos / 30;
         dicas.push(`
             <div class="dica-item">
-                <strong>🛡️ Reserva de emergência</strong><br>
-                Recomenda-se ter ${formatarMoeda(reservaEmergencia)} guardado 
-                (equivalente a 3 meses de renda) para imprevistos.
+                <strong><i class="bi bi-calendar-day"></i> Conscientização Diária</strong><br>
+                Você gasta em média ${formatarMoeda(gastoMedioDiario)} por dia.
+                Antes de cada compra, pergunte-se: "Preciso mesmo disso?"
             </div>
         `);
     }
     
-    container.innerHTML = dicas.join('');
+    // 5. NOVA: Dica de Meta Progressiva
+    if (resumo.saldo > 100) {
+        dicas.push(`
+            <div class="dica-item">
+                <strong><i class="bi bi-rocket-takeoff"></i> Desafio do Mês</strong><br>
+                Que tal tentar economizar ${formatarMoeda(resumo.saldo * 0.1)} a mais?
+                Guarde pequenos valores diariamente - eles fazem grande diferença no final do mês!
+            </div>
+        `);
+    }
+    
+    // 6. Sugestões baseadas em objetivos (melhorada)
+    if (financas.objetivos.length > 0 && resumo.saldo > 0) {
+        financas.objetivos.filter(o => !o.concluido).forEach(objetivo => {
+            const valorRecomendado = resumo.saldo * 0.2; // Agora sugere 20%
+            const meses = Math.ceil(objetivo.valorNecessario / valorRecomendado);
+            
+            if (meses <= 36) { // Só mostra objetivos alcançáveis em até 3 anos
+                dicas.push(`
+                    <div class="dica-item">
+                        <strong><i class="bi bi-bullseye"></i> ${objetivo.nome}</strong><br>
+                        Destinando ${formatarMoeda(valorRecomendado)} por mês (20% do seu saldo),
+                        você conquistará isso em <strong>${meses} meses</strong>!
+                    </div>
+                `);
+            }
+        });
+    }
+    
+    // 7. Dica de Reserva de Emergência (melhorada)
+    if (resumo.totalEntradas > 0) {
+        const mesesReserva = [3, 6, 12];
+        mesesReserva.forEach(meses => {
+            const reservaNecessaria = resumo.totalEntradas * meses;
+            const economiaMensal = reservaNecessaria / (meses * 12); // Para construir em 1 ano
+            
+            dicas.push(`
+                <div class="dica-item">
+                    <strong><i class="bi bi-shield-check"></i> Reserva de ${meses} Meses</strong><br>
+                    Para ter ${meses} meses de segurança: precisa de ${formatarMoeda(reservaNecessaria)}.
+                    Economizando ${formatarMoeda(economiaMensal)} por mês, você constrói isso em 1 ano.
+                </div>
+            `);
+        });
+    }
+    
+    // 8. NOVA: Dica de Investimento Básico
+    if (resumo.saldo > 500) {
+        dicas.push(`
+            <div class="dica-item">
+                <strong><i class="bi bi-graph-up-arrow"></i> Próximo Passo: Investir</strong><br>
+                Com ${formatarMoeda(resumo.saldo)} disponível, considere:
+                <ul class="mb-0 mt-1">
+                    <li>💰 Tesouro Selic (reserva emergencial)</li>
+                    <li>📈 ETF de índices (longo prazo)</li>
+                    <li>🏦 CDB de bancos sólidos</li>
+                </ul>
+            </div>
+        `);
+    }
+    
+    // 9. NOVA: Dica de Revisão Periódica
+    dicas.push(`
+        <div class="dica-item">
+            <strong><i class="bi bi-clock-history"></i> Revisão Semanal</strong><br>
+            Reserve 10 minutos por semana para revisar seus gastos.
+            Pequenos ajustes frequentes têm mais impacto que mudanças drásticas mensais.
+        </div>
+    `);
+    
+    // 10. Caso não tenha dados suficientes
+    if (financas.gastos.length === 0 && financas.entradas.length === 0) {
+        dicas = [`
+            <div class="dica-item">
+                <strong><i class="bi bi-info-circle"></i> Comece Agora!</strong><br>
+                1. Adicione seu salário<br>
+                2. Registre seus gastos do dia<br>
+                3. Defina um objetivo<br>
+                4. Acompanhe suas dicas personalizadas
+            </div>
+        `];
+    }
+    
+    // Limitar a 5 dicas para não poluir a tela
+    container.innerHTML = dicas.slice(0, 5).join('');
 }
 
 // ========== GRÁFICOS ==========
@@ -692,4 +812,71 @@ function formatarMoeda(valor) {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
     });
+}
+
+// ========== FUNÇÕES PARA LIMPAR DADOS ==========
+
+function mostrarModalLimpar() {
+    const modal = new bootstrap.Modal(document.getElementById('modalLimpar'));
+    modal.show();
+}
+
+function limparTodosOsDados() {
+    // Limpar localStorage
+    localStorage.removeItem('financasSimples');
+    localStorage.removeItem('financasHistorico');
+    
+    // Resetar objeto financas
+    financas = {
+        salario: 0,
+        entradas: [],
+        gastos: [],
+        objetivos: [],
+        historico: []
+    };
+    
+    // Resetar campos do formulário
+    document.getElementById('salario').value = '0';
+    document.getElementById('entrada-desc').value = '';
+    document.getElementById('entrada-valor').value = '';
+    document.getElementById('gasto-desc').value = '';
+    document.getElementById('gasto-valor').value = '';
+    document.getElementById('objetivo-nome').value = '';
+    document.getElementById('objetivo-valor').value = '';
+    
+    // Atualizar interface
+    atualizarInterface();
+    
+    // Fechar modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('modalLimpar'));
+    modal.hide();
+    
+    // Mostrar feedback
+    mostrarFeedback('Todos os dados foram apagados com sucesso!', 'success');
+}
+
+function mostrarFeedback(mensagem, tipo) {
+    // Criar elemento de feedback
+    const feedback = document.createElement('div');
+    feedback.className = `alert alert-${tipo} alert-dismissible fade show position-fixed`;
+    feedback.style.cssText = `
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 300px;
+    `;
+    feedback.innerHTML = `
+        ${mensagem}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    // Adicionar ao body
+    document.body.appendChild(feedback);
+    
+    // Remover após 5 segundos
+    setTimeout(() => {
+        if (feedback.parentNode) {
+            feedback.remove();
+        }
+    }, 5000);
 }

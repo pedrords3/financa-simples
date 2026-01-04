@@ -7,7 +7,7 @@
 }
 
 body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #667eea 0%, #4ba27c 100%);
     min-height: 100vh;
     padding-bottom: 50px;
 }
@@ -71,7 +71,7 @@ body {
 }
 
 .objetivo-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #667eea 0%, #4b76a2 100%);
     color: white;
     border-radius: 10px;
     padding: 15px;
@@ -119,4 +119,67 @@ body {
 .btn-exportar:hover {
     transform: scale(1.05);
     box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+}
+
+/* Estilos para novos elementos */
+.btn-outline-danger {
+    transition: all 0.3s;
+}
+
+.btn-outline-danger:hover {
+    transform: scale(1.05);
+}
+
+/* Melhorar visual das dicas */
+.dica-item ul {
+    padding-left: 20px;
+    margin-bottom: 0;
+}
+
+.dica-item li {
+    margin-bottom: 3px;
+    font-size: 0.9em;
+}
+
+/* Animações suaves */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dica-item {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Responsividade extra */
+@media (max-width: 768px) {
+    .header-principal {
+        padding: 15px;
+    }
+    
+    .btn-exportar {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .dica-item {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Melhorar acessibilidade */
+.btn-action:focus {
+    outline: 2px solid var(--azul-objetivos);
+    outline-offset: 2px;
+}
+
+/* Destaque para números importantes */
+.fw-bold {
+    color: #2c3e50;
+}
+
+/* Gradiente mais suave para objetivos */
+.objetivo-card {
+    background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%);
 }
