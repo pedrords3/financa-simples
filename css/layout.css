@@ -1,0 +1,194 @@
+/* Estrutura da página: barra superior, painéis, rodapé e botão flutuante */
+
+/* ========== BARRA SUPERIOR ========== */
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    background: var(--app-topbar);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+    border-bottom: 1px solid var(--app-border);
+}
+
+.topbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    height: 64px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--app-text);
+    text-decoration: none;
+    white-space: nowrap;
+}
+.brand img { border-radius: 8px; }
+
+.mes-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+}
+
+.mes-label {
+    border: 0;
+    background: transparent;
+    color: var(--app-text);
+    font-weight: 600;
+    font-size: 1.05rem;
+    padding: 6px 10px;
+    border-radius: 10px;
+    min-width: 160px;
+    text-align: center;
+    white-space: nowrap;
+}
+.mes-label:hover { background: var(--app-surface-2); }
+
+.seletor-mes { width: 270px; padding: 12px; }
+
+.seletor-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.seletor-grade {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+}
+
+.seletor-grade button {
+    position: relative;
+    border: 1px solid transparent;
+    background: var(--app-surface-2);
+    color: var(--app-text);
+    border-radius: 10px;
+    padding: 8px 0;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+.seletor-grade button:hover { border-color: var(--app-primary); }
+.seletor-grade button.atual { border-color: var(--app-primary); color: var(--app-primary); }
+.seletor-grade button.ativo { background: var(--app-primary); border-color: var(--app-primary); color: var(--app-on-primary); }
+
+.ponto-dados {
+    position: absolute;
+    top: 5px;
+    right: 7px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.6;
+}
+
+.btn-hoje {
+    background: var(--app-primary-soft);
+    color: var(--app-primary);
+    font-weight: 600;
+    border: 0;
+    border-radius: 999px;
+    padding: 4px 12px;
+}
+.btn-hoje:hover { background: var(--app-primary); color: var(--app-on-primary); }
+
+.topbar-acoes { display: flex; align-items: center; gap: 6px; }
+
+.btn-icone {
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--app-muted);
+    font-size: 1.1rem;
+    transition: background 0.15s, color 0.15s;
+}
+.btn-icone:hover { background: var(--app-surface-2); color: var(--app-text); }
+
+/* ========== PAINÉIS ========== */
+.painel {
+    background: var(--app-surface);
+    border: 1px solid var(--app-border);
+    border-radius: var(--raio);
+    box-shadow: var(--app-shadow);
+    overflow: hidden;
+}
+
+.painel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 20px;
+    flex-wrap: wrap;
+}
+
+.painel-titulo {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.painel-titulo i { color: var(--app-muted); }
+
+.painel-corpo { padding: 0 20px 20px; }
+
+.painel-rodape {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    justify-content: flex-end;
+    padding: 12px 20px;
+    border-top: 1px solid var(--app-border);
+    background: var(--app-surface-2);
+    font-size: 0.85rem;
+    color: var(--app-muted);
+}
+.painel-rodape:empty { display: none; }
+.painel-rodape strong { color: var(--app-text); }
+
+.rodape {
+    text-align: center;
+    color: var(--app-muted);
+    font-size: 0.82rem;
+    margin-top: 32px;
+}
+.rodape kbd {
+    background: var(--app-surface);
+    color: var(--app-text);
+    border: 1px solid var(--app-border);
+    font-size: 0.75rem;
+}
+
+.fab {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    border: 0;
+    background: var(--app-primary);
+    color: var(--app-on-primary);
+    font-size: 1.6rem;
+    box-shadow: 0 8px 24px rgba(15, 157, 118, 0.4);
+    z-index: 1030;
+}
+

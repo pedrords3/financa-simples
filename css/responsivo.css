@@ -1,0 +1,37 @@
+/* Ajustes para telas pequenas */
+
+/* ========== RESPONSIVO ========== */
+@media (max-width: 767.98px) {
+    body { font-size: 0.92rem; }
+    .topbar-inner { height: auto; padding-top: 10px; padding-bottom: 10px; flex-wrap: wrap; }
+    .brand span { display: none; }
+    .mes-nav { order: 0; flex: 1; justify-content: center; }
+    .mes-label { min-width: 0; font-size: 1rem; }
+    .kpi { padding: 14px 16px; }
+    .kpi-valor { font-size: 1.2rem; }
+    .kpi-icone { width: 28px; height: 28px; }
+    .painel-header { padding: 14px 16px; }
+    .painel-corpo { padding: 0 16px 16px; }
+    .filtros { padding: 0 16px 12px; }
+    .filtros .form-select { flex: 1 1 140px; }
+    .item {
+        grid-template-columns: auto 1fr auto;
+        gap: 10px;
+        padding: 12px 16px;
+    }
+    .item-icone { display: none; }
+    .item-acoes { display: none; }
+    .item-fixa { grid-template-columns: 1fr auto; }
+    .resumo-fixas > div { padding: 10px 12px; }
+    .painel-rodape { justify-content: flex-start; padding: 12px 16px; }
+}
+
+@media (max-width: 400px) {
+    .mes-label { padding: 6px 4px; font-size: 0.95rem; }
+    .mes-nav .btn-icone { width: 32px; }
+    .segmento > button { padding: 6px 10px; }
+}
+
+@media (max-width: 340px) {
+    #btn-adicionar-aba span { display: none; }
+}

@@ -1,0 +1,135 @@
+/* Tokens de cor (claro/escuro), tipografia e ajustes globais do Bootstrap */
+
+/* ========== TEMA ========== */
+:root,
+[data-bs-theme="light"] {
+    --app-bg: #f3f5f9;
+    --app-surface: #ffffff;
+    --app-surface-2: #f6f8fb;
+    --app-border: #e5e9f0;
+    --app-text: #0f172a;
+    --app-muted: #64748b;
+    --app-primary: #0f9d76;
+    --app-primary-hover: #0b8664;
+    --app-on-primary: #ffffff;
+    --app-primary-soft: rgba(15, 157, 118, 0.12);
+    --app-success: #15803d;
+    --app-danger: #dc2626;
+    --app-warning: #b45309;
+    --app-info: #2563eb;
+    --app-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 6px 20px rgba(15, 23, 42, 0.05);
+    --app-topbar: rgba(255, 255, 255, 0.85);
+    --raio: 16px;
+}
+
+[data-bs-theme="dark"] {
+    --app-bg: #0b1120;
+    --app-surface: #121a2b;
+    --app-surface-2: #0f1626;
+    --app-border: #222c40;
+    --app-text: #e6e9ef;
+    --app-muted: #94a3b8;
+    --app-primary: #34d399;
+    --app-primary-hover: #6ee7b7;
+    --app-on-primary: #052e1f;
+    --app-primary-soft: rgba(52, 211, 153, 0.14);
+    --app-success: #4ade80;
+    --app-danger: #f87171;
+    --app-warning: #fbbf24;
+    --app-info: #60a5fa;
+    --app-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --app-topbar: rgba(11, 17, 32, 0.85);
+    --bs-body-bg: #0b1120;
+    --bs-border-color: #222c40;
+    --bs-tertiary-bg: #1a2336;
+}
+
+/* ========== BASE ========== */
+body {
+    background: var(--app-bg);
+    color: var(--app-text);
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.95rem;
+    min-height: 100vh;
+    padding-bottom: 80px;
+}
+
+.text-muted { color: var(--app-muted) !important; }
+.num { font-variant-numeric: tabular-nums; }
+
+.btn-primary {
+    --bs-btn-bg: var(--app-primary);
+    --bs-btn-border-color: var(--app-primary);
+    --bs-btn-color: var(--app-on-primary);
+    --bs-btn-hover-bg: var(--app-primary-hover);
+    --bs-btn-hover-border-color: var(--app-primary-hover);
+    --bs-btn-hover-color: var(--app-on-primary);
+    --bs-btn-active-bg: var(--app-primary-hover);
+    --bs-btn-active-border-color: var(--app-primary-hover);
+    --bs-btn-active-color: var(--app-on-primary);
+    --bs-btn-disabled-bg: var(--app-primary);
+    --bs-btn-disabled-border-color: var(--app-primary);
+    font-weight: 600;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--app-primary);
+    --bs-btn-border-color: var(--app-primary);
+    --bs-btn-hover-bg: var(--app-primary);
+    --bs-btn-hover-border-color: var(--app-primary);
+    --bs-btn-hover-color: var(--app-on-primary);
+    --bs-btn-active-bg: var(--app-primary);
+    --bs-btn-active-color: var(--app-on-primary);
+}
+
+.btn-light {
+    --bs-btn-bg: var(--app-surface-2);
+    --bs-btn-border-color: var(--app-border);
+    --bs-btn-color: var(--app-text);
+    --bs-btn-hover-bg: var(--app-border);
+    --bs-btn-hover-border-color: var(--app-border);
+    --bs-btn-hover-color: var(--app-text);
+}
+
+.btn-link {
+    --bs-btn-color: var(--app-primary);
+    --bs-btn-hover-color: var(--app-primary-hover);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+    border-color: var(--app-primary);
+    box-shadow: 0 0 0 0.2rem var(--app-primary-soft);
+}
+
+.form-check-input:checked {
+    background-color: var(--app-primary);
+    border-color: var(--app-primary);
+}
+
+.form-label { font-weight: 500; font-size: 0.875rem; }
+
+.modal-content {
+    border: 1px solid var(--app-border);
+    border-radius: var(--raio);
+    background: var(--app-surface);
+}
+.modal-header, .modal-footer { border-color: var(--app-border); }
+
+.dropdown-menu {
+    border-color: var(--app-border);
+    border-radius: 12px;
+    padding: 6px;
+}
+.dropdown-item {
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+}
+.dropdown-header { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
+

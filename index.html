@@ -1,283 +1,473 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="icone.png">
-    <title>Finança Simples - Sua Planilha Financeira Inteligente</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="theme-color" content="#0f9d76">
+    <title>Finança Simples</title>
+    <link rel="icon" type="image/png" href="assets/img/icone.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/componentes.css">
+    <link rel="stylesheet" href="css/responsivo.css">
+    <script>
+        // Aplica o tema antes de desenhar a página para evitar "piscada"
+        (function () {
+            let tema = null;
+            try { tema = localStorage.getItem('financasSimples_tema'); } catch (e) {}
+            if (!tema) tema = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-bs-theme', tema);
+        })();
+    </script>
 </head>
 <body>
-    <div class="container mt-4">
-        <!-- Header Principal -->
-        <div class="header-principal text-center">
-            <h1 class="display-5 fw-bold text-gradient">
-                <i class="bi bi-graph-up"></i> Finança Simples
-            </h1>
-            <p class="text-muted">Sua planilha financeira inteligente</p>
-            <div class="mt-2">
-                <button class="btn btn-outline-danger btn-sm" onclick="mostrarModalLimpar()">
-                    <i class="bi bi-trash"></i> Limpar Todos os Dados
+    <!-- Barra superior -->
+    <header class="topbar">
+        <div class="container-xl topbar-inner">
+            <a class="brand" href="#" data-acao="mes-hoje" aria-label="Finança Simples - ir para o mês atual">
+                <img src="assets/img/icone.png" alt="" width="32" height="32">
+                <span>Finança Simples</span>
+            </a>
+
+            <nav class="mes-nav" aria-label="Navegação entre meses">
+                <button class="btn-icone" data-acao="mes-anterior" title="Mês anterior" aria-label="Mês anterior">
+                    <i class="bi bi-chevron-left"></i>
                 </button>
+                <div class="dropdown dropdown-center">
+                    <button class="mes-label" id="mes-label" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" title="Escolher mês">—</button>
+                    <div class="dropdown-menu seletor-mes shadow" id="seletor-mes"></div>
+                </div>
+                <button class="btn-icone" data-acao="mes-proximo" title="Próximo mês" aria-label="Próximo mês">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+                <button class="btn btn-sm btn-hoje d-none" id="btn-hoje" data-acao="mes-hoje">Hoje</button>
+            </nav>
+
+            <div class="topbar-acoes">
+                <button class="btn btn-primary d-none d-md-inline-flex align-items-center gap-1" data-acao="novo-lancamento" title="Atalho: tecla N">
+                    <i class="bi bi-plus-lg"></i> Novo lançamento
+                </button>
+                <button class="btn-icone" data-acao="tema" title="Alternar tema claro/escuro" aria-label="Alternar tema">
+                    <i class="bi bi-moon-stars" id="icone-tema"></i>
+                </button>
+                <div class="dropdown">
+                    <button class="btn-icone" data-bs-toggle="dropdown" aria-expanded="false" title="Mais opções" aria-label="Mais opções">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li><h6 class="dropdown-header">Exportar</h6></li>
+                        <li><button class="dropdown-item" data-acao="exportar-mes"><i class="bi bi-file-earmark-spreadsheet"></i> Planilha do mês (Excel)</button></li>
+                        <li><button class="dropdown-item" data-acao="exportar-ano"><i class="bi bi-calendar3"></i> Planilha do ano (Excel)</button></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><h6 class="dropdown-header">Seus dados</h6></li>
+                        <li><button class="dropdown-item" data-acao="backup"><i class="bi bi-cloud-download"></i> Fazer backup</button></li>
+                        <li><button class="dropdown-item" data-acao="restaurar"><i class="bi bi-cloud-upload"></i> Restaurar backup</button></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><button class="dropdown-item" data-acao="configuracoes"><i class="bi bi-sliders"></i> Categorias e orçamentos</button></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><button class="dropdown-item text-danger" data-acao="limpar-tudo"><i class="bi bi-trash3"></i> Apagar todos os dados</button></li>
+                    </ul>
+                </div>
             </div>
         </div>
+    </header>
 
-        <div class="row">
-            <!-- Coluna Esquerda - Entradas e Objetivos -->
-            <div class="col-lg-4">
-                <!-- Painel de Renda -->
-                <div class="card card-destaque mb-4">
-                    <div class="card-header bg-success text-white">
-                        <h5 class="mb-0"><i class="bi bi-cash-stack"></i> Renda do Mês</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Salário Principal</label>
-                            <div class="input-group">
-                                <span class="input-group-text">R$</span>
-                                <input type="number" class="form-control" id="salario" value="0" step="0.01">
-                                <button class="btn btn-success" onclick="atualizarSalario()">
-                                    <i class="bi bi-check-lg"></i>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Entradas Extras</label>
-                            <div class="input-group mb-3">
-                                <input type="text" class="form-control" id="entrada-desc" placeholder="Ex: Freelance">
-                                <input type="number" class="form-control" id="entrada-valor" placeholder="Valor" step="0.01">
-                                <button class="btn btn-outline-success" onclick="addEntrada()">
-                                    <i class="bi bi-plus-lg"></i>
-                                </button>
-                            </div>
-                            <div id="lista-entradas"></div>
-                        </div>
-                    </div>
-                </div>
+    <main class="container-xl py-4">
+        <!-- Alertas (contas vencidas, a vencer etc.) -->
+        <section id="alertas" class="alertas" aria-live="polite"></section>
 
-                <!-- Objetivos -->
-                <div class="card card-destaque mb-4">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0"><i class="bi bi-bullseye"></i> Meus Objetivos</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <div class="row g-2">
-                                <div class="col-7">
-                                    <input type="text" class="form-control" id="objetivo-nome" placeholder="Ex: Viagem para praia">
-                                </div>
-                                <div class="col-5">
-                                    <input type="number" class="form-control" id="objetivo-valor" placeholder="Valor" step="0.01">
-                                </div>
-                            </div>
-                            <button class="btn btn-primary w-100 mt-2" onclick="addObjetivo()">
-                                <i class="bi bi-plus-circle"></i> Adicionar Objetivo
-                            </button>
-                        </div>
-                        <div id="lista-objetivos"></div>
-                    </div>
-                </div>
+        <!-- Indicadores do mês -->
+        <section class="row g-3 mb-4" id="kpis" aria-label="Resumo do mês"></section>
 
-                <!-- Dicas Inteligentes -->
-                <div class="card card-destaque">
-                    <div class="card-header bg-warning text-dark">
-                        <h5 class="mb-0"><i class="bi bi-lightbulb"></i> Dicas Inteligentes</h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="dicas-financeiras"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Coluna Direita - Gastos e Resumo -->
-            <div class="col-lg-8">
-                <!-- Painel de Gastos -->
-                <div class="card card-destaque mb-4">
-                    <div class="card-header bg-danger text-white">
-                        <h5 class="mb-0"><i class="bi bi-receipt"></i> Meus Gastos</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="gasto-desc" placeholder="Descrição">
-                            </div>
-                            <div class="col-md-3">
-                                <select class="form-select" id="gasto-categoria">
-                                    <option value="moradia">🏠 Moradia</option>
-                                    <option value="alimentacao">🍎 Alimentação</option>
-                                    <option value="transporte">🚗 Transporte</option>
-                                    <option value="lazer">🎮 Lazer</option>
-                                    <option value="saude">🏥 Saúde</option>
-                                    <option value="educacao">📚 Educação</option>
-                                    <option value="outros">📦 Outros</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="input-group">
-                                    <span class="input-group-text">R$</span>
-                                    <input type="number" class="form-control" id="gasto-valor" placeholder="Valor" step="0.01">
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <button class="btn btn-danger w-100" onclick="addGasto()">
-                                    <i class="bi bi-plus-lg"></i> Add
-                                </button>
-                            </div>
+        <div class="row g-4">
+            <!-- Coluna principal -->
+            <div class="col-lg-8 d-flex flex-column gap-4">
+                <section class="painel">
+                    <div class="painel-header">
+                        <div class="segmento" role="tablist" id="abas">
+                            <button role="tab" data-acao="aba" data-aba="despesas">Despesas <span class="contador" id="cont-despesas">0</span></button>
+                            <button role="tab" data-acao="aba" data-aba="receitas">Receitas <span class="contador" id="cont-receitas">0</span></button>
+                            <button role="tab" data-acao="aba" data-aba="recorrentes"><i class="bi bi-arrow-repeat"></i> Fixas <span class="contador" id="cont-recorrentes">0</span></button>
                         </div>
-                        <div id="lista-gastos"></div>
-                    </div>
-                </div>
-
-                <!-- Resumo Financeiro -->
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <div class="card card-destaque h-100 saldo-positivo" id="card-saldo">
-                            <div class="card-body text-center">
-                                <h6 class="text-muted mb-3">
-                                    <i class="bi bi-wallet2"></i> Resumo do Mês
-                                </h6>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="mb-3">
-                                            <small class="text-muted d-block">Total de Entradas</small>
-                                            <h4 id="total-entradas" class="valor-entrada">R$ 0,00</h4>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="mb-3">
-                                            <small class="text-muted d-block">Total de Gastos</small>
-                                            <h4 id="total-gastos" class="valor-gasto">R$ 0,00</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr>
-                                <div>
-                                    <small class="text-muted d-block">Saldo Disponível</small>
-                                    <h2 id="saldo-restante" class="fw-bold">R$ 0,00</h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <div class="card card-destaque h-100">
-                            <div class="card-body text-center">
-                                <h6 class="text-muted mb-3">
-                                    <i class="bi bi-pie-chart"></i> Distribuição por Categoria
-                                </h6>
-                                <div class="d-flex justify-content-center">
-                                    <canvas id="grafico-categorias" width="200" height="200"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Gráfico e Exportação -->
-                <div class="card card-destaque">
-                    <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"><i class="bi bi-bar-chart"></i> Evolução e Exportação</h5>
-                        <button class="btn btn-exportar" onclick="exportarParaExcel()">
-                            <i class="bi bi-download"></i> Exportar para Excel
+                        <button class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1" data-acao="adicionar-aba" id="btn-adicionar-aba">
+                            <i class="bi bi-plus-lg"></i> <span>Adicionar</span>
                         </button>
                     </div>
-                    <div class="card-body">
-                        <canvas id="grafico-evolucao"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Modal para Edição -->
-    <div class="modal fade" id="modalEditar" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Editar Item</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" id="edit-tipo">
-                    <input type="hidden" id="edit-index">
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Descrição</label>
-                        <input type="text" class="form-control" id="edit-descricao">
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Categoria</label>
-                        <select class="form-select" id="edit-categoria">
-                            <option value="moradia">Moradia</option>
-                            <option value="alimentacao">Alimentação</option>
-                            <option value="transporte">Transporte</option>
-                            <option value="lazer">Lazer</option>
-                            <option value="saude">Saúde</option>
-                            <option value="educacao">Educação</option>
-                            <option value="outros">Outros</option>
-                        </select>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Valor</label>
-                        <div class="input-group">
-                            <span class="input-group-text">R$</span>
-                            <input type="number" class="form-control" id="edit-valor" step="0.01">
+                    <div class="filtros" id="filtros">
+                        <div class="busca">
+                            <i class="bi bi-search"></i>
+                            <input type="search" class="form-control form-control-sm" id="filtro-busca" placeholder="Buscar..." aria-label="Buscar lançamentos">
+                        </div>
+                        <select class="form-select form-select-sm" id="filtro-categoria" aria-label="Filtrar por categoria"></select>
+                        <div class="segmento segmento-sm" id="filtro-status" role="group" aria-label="Filtrar por situação">
+                            <button data-acao="status" data-valor="">Todos</button>
+                            <button data-acao="status" data-valor="pendente">Pendentes</button>
+                            <button data-acao="status" data-valor="pago" id="status-pago-label">Pagos</button>
                         </div>
                     </div>
+
+                    <div id="lista" class="lista"></div>
+                    <div id="lista-rodape" class="painel-rodape"></div>
+                </section>
+
+                <section class="painel">
+                    <div class="painel-header">
+                        <h2 class="painel-titulo"><i class="bi bi-bar-chart-line"></i> Últimos 12 meses</h2>
+                        <span class="text-muted small" id="evolucao-legenda"></span>
+                    </div>
+                    <div class="painel-corpo">
+                        <div class="grafico-evolucao"><canvas id="grafico-evolucao" aria-label="Gráfico de receitas e despesas dos últimos 12 meses" role="img"></canvas></div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Coluna lateral -->
+            <aside class="col-lg-4 d-flex flex-column gap-4">
+                <section class="painel">
+                    <div class="painel-header">
+                        <h2 class="painel-titulo"><i class="bi bi-pie-chart"></i> Para onde foi o dinheiro</h2>
+                        <button class="btn btn-link btn-sm p-0" data-acao="configuracoes">Orçamentos</button>
+                    </div>
+                    <div class="painel-corpo">
+                        <div class="grafico-rosca" id="grafico-rosca-wrap">
+                            <canvas id="grafico-categorias" aria-label="Gráfico de despesas por categoria" role="img"></canvas>
+                            <div class="rosca-centro" id="rosca-centro"></div>
+                        </div>
+                        <div id="lista-categorias"></div>
+                    </div>
+                </section>
+
+                <section class="painel">
+                    <div class="painel-header">
+                        <h2 class="painel-titulo"><i class="bi bi-bullseye"></i> Objetivos</h2>
+                        <button class="btn btn-link btn-sm p-0" data-acao="novo-objetivo"><i class="bi bi-plus-lg"></i> Novo</button>
+                    </div>
+                    <div class="painel-corpo" id="lista-objetivos"></div>
+                </section>
+
+                <section class="painel">
+                    <div class="painel-header">
+                        <h2 class="painel-titulo"><i class="bi bi-lightbulb"></i> Dicas do mês</h2>
+                    </div>
+                    <div class="painel-corpo" id="dicas"></div>
+                </section>
+            </aside>
+        </div>
+
+        <footer class="rodape">
+            <i class="bi bi-shield-lock"></i>
+            Seus dados ficam salvos somente neste navegador.
+            <button class="btn btn-link btn-sm p-0 align-baseline" data-acao="backup">Faça um backup</button> de vez em quando.
+            <span class="d-none d-md-inline">· Atalho: tecla <kbd>N</kbd> para novo lançamento.</span>
+        </footer>
+    </main>
+
+    <!-- Botão flutuante (celular) -->
+    <button class="fab d-md-none" data-acao="novo-lancamento" aria-label="Novo lançamento">
+        <i class="bi bi-plus-lg"></i>
+    </button>
+
+    <!-- ========== MODAIS ========== -->
+
+    <!-- Lançamento (despesa/receita) -->
+    <div class="modal fade" id="modal-lancamento" tabindex="-1" aria-labelledby="lancamento-titulo" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="modal-content" id="form-lancamento" novalidate autocomplete="off">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="lancamento-titulo">Novo lançamento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="segmento segmento-tipo mb-3" role="group" aria-label="Tipo de lançamento">
+                        <input type="radio" class="btn-check" name="lanc-tipo" id="lanc-tipo-despesa" value="despesa" checked>
+                        <label class="seg-despesa" for="lanc-tipo-despesa"><i class="bi bi-arrow-down-circle"></i> Despesa</label>
+                        <input type="radio" class="btn-check" name="lanc-tipo" id="lanc-tipo-receita" value="receita">
+                        <label class="seg-receita" for="lanc-tipo-receita"><i class="bi bi-arrow-up-circle"></i> Receita</label>
+                    </div>
+
+                    <div id="lanc-info" class="info-box mb-3 d-none"></div>
+
+                    <div class="mb-3">
+                        <label for="lanc-descricao" class="form-label">Descrição</label>
+                        <input type="text" class="form-control" id="lanc-descricao" list="sugestoes-descricao" placeholder="Ex.: Aluguel, Mercado, Salário" maxlength="80" required>
+                        <datalist id="sugestoes-descricao"></datalist>
+                        <div class="invalid-feedback">Informe uma descrição.</div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label for="lanc-valor" class="form-label">Valor</label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text">R$</span>
+                                <input type="text" inputmode="numeric" data-moeda class="form-control" id="lanc-valor" placeholder="0,00" required>
+                                <div class="invalid-feedback">Informe um valor maior que zero.</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <label for="lanc-data" class="form-label" id="lanc-data-label">Data</label>
+                            <input type="date" class="form-control" id="lanc-data" required>
+                            <div class="invalid-feedback">Informe a data.</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="lanc-categoria" class="form-label">Categoria</label>
+                        <select class="form-select" id="lanc-categoria"></select>
+                    </div>
+
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" role="switch" id="lanc-pago">
+                        <label class="form-check-label" for="lanc-pago" id="lanc-pago-label">Já foi pago</label>
+                    </div>
+
+                    <div id="bloco-repeticao">
+                        <label for="lanc-repeticao" class="form-label">Repetição</label>
+                        <select class="form-select" id="lanc-repeticao">
+                            <option value="unica">Não se repete</option>
+                            <option value="mensal">Repete todo mês (fixa)</option>
+                            <option value="parcelada">Parcelado</option>
+                        </select>
+                        <div id="bloco-parcelas" class="row g-2 mt-1 d-none">
+                            <div class="col-5">
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="lanc-parcelas" min="2" max="120" value="2" aria-label="Número de parcelas">
+                                    <span class="input-group-text">vezes</span>
+                                </div>
+                            </div>
+                            <div class="col-7">
+                                <select class="form-select" id="lanc-modo-parcela" aria-label="O valor informado é">
+                                    <option value="parcela">Valor de cada parcela</option>
+                                    <option value="total">Valor total da compra</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-text" id="ajuda-repeticao"></div>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" onclick="removerItem()">Remover</button>
-                    <button type="button" class="btn btn-primary" onclick="salvarEdicao()">Salvar</button>
+                    <button type="button" class="btn btn-outline-danger me-auto d-none" id="btn-excluir-lancamento"><i class="bi bi-trash3"></i> Excluir</button>
+                    <button type="submit" class="btn btn-light" value="novo" id="btn-salvar-novo">Salvar e adicionar outro</button>
+                    <button type="submit" class="btn btn-primary" value="fechar">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Conta fixa / recorrente -->
+    <div class="modal fade" id="modal-recorrente" tabindex="-1" aria-labelledby="recorrente-titulo" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="modal-content" id="form-recorrente" novalidate autocomplete="off">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="recorrente-titulo">Nova conta fixa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small">Lançamentos fixos entram automaticamente todo mês como <strong>pendentes</strong>. Você só precisa marcar como pago.</p>
+                    <div class="segmento segmento-tipo mb-3" role="group" aria-label="Tipo">
+                        <input type="radio" class="btn-check" name="rec-tipo" id="rec-tipo-despesa" value="despesa" checked>
+                        <label class="seg-despesa" for="rec-tipo-despesa"><i class="bi bi-arrow-down-circle"></i> Despesa</label>
+                        <input type="radio" class="btn-check" name="rec-tipo" id="rec-tipo-receita" value="receita">
+                        <label class="seg-receita" for="rec-tipo-receita"><i class="bi bi-arrow-up-circle"></i> Receita</label>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rec-descricao" class="form-label">Descrição</label>
+                        <input type="text" class="form-control" id="rec-descricao" placeholder="Ex.: Aluguel, Internet, Salário" maxlength="80" required>
+                        <div class="invalid-feedback">Informe uma descrição.</div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-7">
+                            <label for="rec-valor" class="form-label">Valor mensal</label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text">R$</span>
+                                <input type="text" inputmode="numeric" data-moeda class="form-control" id="rec-valor" placeholder="0,00" required>
+                                <div class="invalid-feedback">Informe um valor maior que zero.</div>
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            <label for="rec-dia" class="form-label">Dia do mês</label>
+                            <input type="number" class="form-control" id="rec-dia" min="1" max="31" value="5" required>
+                            <div class="invalid-feedback">Entre 1 e 31.</div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rec-categoria" class="form-label">Categoria</label>
+                        <select class="form-select" id="rec-categoria"></select>
+                    </div>
+                    <div class="form-check d-none" id="bloco-propagar">
+                        <input class="form-check-input" type="checkbox" id="rec-propagar" checked>
+                        <label class="form-check-label" for="rec-propagar" id="rec-propagar-label">Atualizar também os lançamentos pendentes deste mês em diante</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger me-auto d-none" id="btn-excluir-recorrente"><i class="bi bi-x-circle"></i> Encerrar</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Objetivo -->
+    <div class="modal fade" id="modal-objetivo" tabindex="-1" aria-labelledby="objetivo-titulo" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="modal-content" id="form-objetivo" novalidate autocomplete="off">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="objetivo-titulo">Novo objetivo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="obj-nome" class="form-label">Nome do objetivo</label>
+                        <input type="text" class="form-control" id="obj-nome" placeholder="Ex.: Reserva de emergência, Viagem" maxlength="60" required>
+                        <div class="invalid-feedback">Dê um nome ao objetivo.</div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label for="obj-meta" class="form-label">Quanto precisa</label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text">R$</span>
+                                <input type="text" inputmode="numeric" data-moeda class="form-control" id="obj-meta" placeholder="0,00" required>
+                                <div class="invalid-feedback">Informe a meta.</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <label for="obj-atual" class="form-label">Já guardado</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                <input type="text" inputmode="numeric" data-moeda class="form-control" id="obj-atual" placeholder="0,00">
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="obj-prazo" class="form-label">Quero alcançar até <span class="text-muted">(opcional)</span></label>
+                        <input type="month" class="form-control" id="obj-prazo">
+                        <div class="form-text">Com um prazo, calculamos quanto guardar por mês.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger me-auto d-none" id="btn-excluir-objetivo"><i class="bi bi-trash3"></i> Excluir</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Guardar / retirar de um objetivo -->
+    <div class="modal fade" id="modal-aporte" tabindex="-1" aria-labelledby="aporte-titulo" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <form class="modal-content" id="form-aporte" novalidate autocomplete="off">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="aporte-titulo">Objetivo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="segmento segmento-tipo mb-3" role="group" aria-label="Operação">
+                        <input type="radio" class="btn-check" name="aporte-tipo" id="aporte-guardar" value="guardar" checked>
+                        <label class="seg-receita" for="aporte-guardar"><i class="bi bi-piggy-bank"></i> Guardar</label>
+                        <input type="radio" class="btn-check" name="aporte-tipo" id="aporte-retirar" value="retirar">
+                        <label class="seg-despesa" for="aporte-retirar"><i class="bi bi-box-arrow-up"></i> Retirar</label>
+                    </div>
+                    <div class="mb-3">
+                        <label for="aporte-valor" class="form-label">Valor</label>
+                        <div class="input-group has-validation">
+                            <span class="input-group-text">R$</span>
+                            <input type="text" inputmode="numeric" data-moeda class="form-control" id="aporte-valor" placeholder="0,00" required>
+                            <div class="invalid-feedback">Informe um valor.</div>
+                        </div>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="aporte-lancar" checked>
+                        <label class="form-check-label small" for="aporte-lancar" id="aporte-lancar-label">Lançar no mês</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Configurações: categorias e orçamentos -->
+    <div class="modal fade" id="modal-config" tabindex="-1" aria-labelledby="config-titulo" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="config-titulo">Categorias e orçamentos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small mb-3">
+                        Defina um <strong>limite mensal</strong> para as categorias que quer controlar. O grupo é usado na análise 50-30-20
+                        (necessidades, desejos e poupança). As alterações são salvas na hora.
+                    </p>
+                    <h6 class="config-secao">Despesas</h6>
+                    <div id="config-cat-despesa" class="config-lista"></div>
+                    <h6 class="config-secao mt-4">Receitas</h6>
+                    <div id="config-cat-receita" class="config-lista"></div>
+
+                    <h6 class="config-secao mt-4">Nova categoria</h6>
+                    <form class="row g-2 align-items-end" id="form-nova-categoria" autocomplete="off">
+                        <div class="col-12 col-sm-5">
+                            <input type="text" class="form-control" id="nova-cat-nome" placeholder="Nome (ex.: Pets)" maxlength="30" required aria-label="Nome da categoria">
+                        </div>
+                        <div class="col-6 col-sm-3">
+                            <select class="form-select" id="nova-cat-tipo" aria-label="Tipo da categoria">
+                                <option value="despesa">Despesa</option>
+                                <option value="receita">Receita</option>
+                            </select>
+                        </div>
+                        <div class="col-2 col-sm-1">
+                            <input type="color" class="form-control form-control-color w-100" id="nova-cat-cor" value="#0ea5e9" aria-label="Cor">
+                        </div>
+                        <div class="col-4 col-sm-3">
+                            <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-plus-lg"></i> Adicionar</button>
+                        </div>
+                    </form>
+
+                    <h6 class="config-secao mt-4">Preferências</h6>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="config-transportar">
+                        <label class="form-check-label" for="config-transportar">
+                            Somar a sobra dos meses anteriores no saldo
+                            <span class="d-block text-muted small">Útil se o dinheiro que sobra fica na mesma conta.</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Concluir</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    
-    <script src="script.js"></script>
-    
-    <!-- Modal para Limpar Dados -->
-    <div class="modal fade" id="modalLimpar" tabindex="-1">
-        <div class="modal-dialog">
+    <!-- Confirmação genérica -->
+    <div class="modal fade" id="modal-confirmar" tabindex="-1" aria-labelledby="confirmar-titulo" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title text-danger">
-                        <i class="bi bi-exclamation-triangle"></i> Limpar Todos os Dados
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title" id="confirmar-titulo">Confirmar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
-                <div class="modal-body">
-                    <p class="alert alert-warning">
-                        <i class="bi bi-exclamation-circle"></i> 
-                        <strong>Atenção!</strong> Esta ação não pode ser desfeita.
-                    </p>
-                    <p>Todos os dados serão apagados, incluindo:</p>
-                    <ul>
-                        <li>Salário registrado</li>
-                        <li>Entradas extras</li>
-                        <li>Gastos do mês</li>
-                        <li>Objetivos definidos</li>
-                        <li>Histórico completo</li>
-                    </ul>
-                    <p class="text-muted">Certifique-se de ter exportado seus dados antes de continuar.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" onclick="limparTodosOsDados()">
-                        <i class="bi bi-trash"></i> Limpar Tudo
-                    </button>
-                </div>
+                <div class="modal-body" id="confirmar-mensagem"></div>
+                <div class="modal-footer" id="confirmar-botoes"></div>
             </div>
         </div>
     </div>
+
+    <input type="file" id="input-backup" accept="application/json,.json" hidden>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toasts"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>
